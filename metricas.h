@@ -1,8 +1,6 @@
 #ifndef METRICAS_H
 #define METRICAS_H
 
-#include <string>
-
 class Metricas {
 private:
     static unsigned long iteraciones;
@@ -32,7 +30,6 @@ public:
     static void registrarLiberacion(unsigned long);
     static void sumarLocal(unsigned long);
     static void registrarExterno();
-    static unsigned long bytesCadena(const std::string &);
     static void reportar();
 };
 

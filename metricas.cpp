@@ -44,11 +44,6 @@ void Metricas::sumarLocal(unsigned long bytes) { memoriaLocal += bytes; }
 
 void Metricas::registrarExterno() { ++usosExternos; }
 
-unsigned long Metricas::bytesCadena(const string &cadena) {
-    static const unsigned long capacidadInterna = string().capacity();
-    return cadena.capacity() > capacidadInterna ? cadena.capacity() + 1 : 0;
-}
-
 void Metricas::reportar() {
     unsigned long propia = 3 * sizeof(unsigned long) + sizeof(unsigned int);
     unsigned long total = memoriaDinamica + memoriaLocal + propia;
