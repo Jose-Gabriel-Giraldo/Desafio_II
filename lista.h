@@ -6,6 +6,8 @@
 template <typename T>
 class Lista {
 private:
+    static const unsigned int CAPACIDAD_INICIAL = 4;
+
     T *datos;
     unsigned int tam;
     unsigned int capacidad;
@@ -93,17 +95,19 @@ void Lista<T>::asignar(const T *origen, unsigned int n) {
 
 template <typename T>
 void Lista<T>::agregar(const T &elemento) {
+    if (tam < capacidad) {
+        datos[tam++] = elemento;
+        return;
+    }
     T copia = elemento;
-    if (tam == capacidad) redimensionar(capacidad + 1);
+    redimensionar(capacidad == 0 ? CAPACIDAD_INICIAL : capacidad * 2);
     datos[tam++] = copia;
 }
 
 template <typename T>
 void Lista<T>::eliminar(unsigned int i) {
     if (i >= tam) return;
-    for (unsigned int j = i + 1; j < tam; ++j) datos[j - 1] = datos[j];
-    Metricas::contar(tam - i - 1);
-    --tam;
+    datos[i] = datos[--tam];
 }
 
 template <typename T>

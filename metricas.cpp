@@ -52,7 +52,7 @@ void Metricas::reportar() {
     cout << "Iteraciones: " << iteraciones << '\n';
     cout << "Componentes externos invocados: " << usosExternos << '\n';
     cout << "Memoria total: " << total << " bytes\n";
-    cout << "  Estructuras y objetos: " << memoriaDinamica + propia << " bytes\n";
-    cout << "  Variables locales y parametros: " << memoriaLocal << " bytes\n";
+    cout << "Estructuras y objetos: " << memoriaDinamica + propia << " bytes\n";
+    cout << "Variables locales y parametros: " << memoriaLocal << " bytes\n";
     cout << "---------------------------------\n";
 }

@@ -1,4 +1,4 @@
-#include "foto.h"
+#include "Foto.h"
 
 Foto::Foto() : nombre(), captura(), tamano(0), likes(0) {}
 
@@ -8,7 +8,7 @@ Foto::Foto(const Lista<char> &nombre, const Fecha &captura,
 
 Foto::Foto(const Foto &otra)
     : nombre(otra.nombre), captura(otra.captura),
-      tamano(otra.tamano), likes(otra.likes) {}
+    tamano(otra.tamano), likes(otra.likes) {}
 
 Foto::~Foto() {}
 
@@ -26,6 +26,11 @@ const Lista<char> &Foto::getNombre() const { return nombre; }
 const Fecha &Foto::getCaptura() const { return captura; }
 unsigned int Foto::getTamano() const { return tamano; }
 unsigned int Foto::getLikes() const { return likes; }
+
+void Foto::setNombre(const Lista<char> &valor) { nombre = valor; }
+void Foto::setCaptura(const Fecha &valor) { captura = valor; }
+void Foto::setTamano(unsigned int valor) { tamano = valor; }
+void Foto::setLikes(unsigned int valor) { likes = valor; }
 
 void Foto::darLike() { ++likes; }
 

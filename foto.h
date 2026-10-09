@@ -1,8 +1,8 @@
 #ifndef FOTO_H
 #define FOTO_H
 
-#include "lista.h"
-#include "fecha.h"
+#include "Lista.h"
+#include "Fecha.h"
 
 class Foto {
 private:
@@ -23,6 +23,11 @@ public:
     const Fecha &getCaptura() const;
     unsigned int getTamano() const;
     unsigned int getLikes() const;
+
+    void setNombre(const Lista<char> &);
+    void setCaptura(const Fecha &);
+    void setTamano(unsigned int);
+    void setLikes(unsigned int);
 
     void darLike();
     void quitarLike();

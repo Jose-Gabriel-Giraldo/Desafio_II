@@ -29,6 +29,12 @@ public:
     unsigned char getHora() const;
     unsigned char getMinuto() const;
 
+    void setAnio(unsigned short);
+    void setMes(unsigned char);
+    void setDia(unsigned char);
+    void setHora(unsigned char);
+    void setMinuto(unsigned char);
+
     static Fecha ahora();
     bool esValida() const;
     bool operator<(const Fecha &) const;
