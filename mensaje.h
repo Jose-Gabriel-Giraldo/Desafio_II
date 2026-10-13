@@ -1,22 +1,19 @@
 #ifndef MENSAJE_H
 #define MENSAJE_H
 
-#include "lista.h"
-#include "fecha.h"
-#include <iostream>
+#include "Lista.h"
+#include "Fecha.h"
 
 class Mensaje {
 public:
     static const unsigned int LONGITUD_MAXIMA = 512;
 
 private:
-    unsigned int emisor;     // id del usuario que lo envia
-    unsigned int receptor;   // id del usuario que lo recibe (dueno del mensaje)
-    Fecha fecha;             // fecha de envio
     Lista<char> texto;
+    unsigned int emisor;
+    unsigned int receptor;
+    Fecha fecha;
     bool leido;
-
-    static void escribirDosDigitos(std::ostream &, unsigned int);
 
 public:
     Mensaje();
@@ -25,17 +22,18 @@ public:
     ~Mensaje();
 
     const Mensaje &operator=(const Mensaje &);
-    bool operator<(const Mensaje &) const;
 
     unsigned int getEmisor() const;
     unsigned int getReceptor() const;
     const Fecha &getFecha() const;
     const Lista<char> &getTexto() const;
-    bool estaLeido() const;
+    bool getLeido() const;
 
-    void marcarLeido();
-    bool enRango(const Fecha &, const Fecha &) const;
-    void mostrar(std::ostream &) const;
+    void setEmisor(unsigned int);
+    void setReceptor(unsigned int);
+    void setFecha(const Fecha &);
+    bool setTexto(const Lista<char> &);
+    void setLeido(bool);
 
     static bool textoValido(const Lista<char> &);
 };
