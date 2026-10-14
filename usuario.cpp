@@ -13,39 +13,28 @@ Usuario::Usuario(unsigned int id, const Lista<char> &nombre, const Lista<char> &
 
 Usuario::Usuario(const Usuario &otro)
     : nombre(otro.nombre), clave(otro.clave), correo(otro.correo), ciudad(otro.ciudad),
-    pais(otro.pais), albumes(), enviados(), recibidos(), solicitudes(otro.solicitudes),
+    pais(otro.pais), albumes(otro.albumes), enviados(), recibidos(), solicitudes(otro.solicitudes),
     id(otro.id), primerNoLeido(0), nacimiento(otro.nacimiento), inscripcion(otro.inscripcion) {
-    for (unsigned int i = 0; i < otro.albumes.getTam(); ++i)
-        agregarAlbum(new Album(*otro.albumes[i]));
-    Metricas::contar(otro.albumes.getTam());
+    for (unsigned int i = 0; i < albumes.getTam(); ++i) albumes[i] = new Album(*albumes[i]);
+    Metricas::registrarReserva(albumes.getTam() * sizeof(Album));
+    Metricas::contar(albumes.getTam());
 }
 
 Usuario::~Usuario() {
-    for (unsigned int i = 0; i < albumes.getTam(); ++i) {
-        delete albumes[i];
-        Metricas::registrarLiberacion(sizeof(Album));
-    }
-    for (unsigned int i = 0; i < recibidos.getTam(); ++i) {
-        delete recibidos[i];
-        Metricas::registrarLiberacion(sizeof(Mensaje));
-    }
+    for (unsigned int i = 0; i < albumes.getTam(); ++i) delete albumes[i];
+    for (unsigned int i = 0; i < recibidos.getTam(); ++i) delete recibidos[i];
+    Metricas::registrarLiberacion(albumes.getTam() * sizeof(Album) + recibidos.getTam() * sizeof(Mensaje));
     Metricas::contar(albumes.getTam() + recibidos.getTam());
 }
 
 const Usuario &Usuario::operator=(const Usuario &otro) {
     if (this != &otro) {
-        for (unsigned int i = 0; i < albumes.getTam(); ++i) {
-            delete albumes[i];
-            Metricas::registrarLiberacion(sizeof(Album));
-        }
-        for (unsigned int i = 0; i < recibidos.getTam(); ++i) {
-            delete recibidos[i];
-            Metricas::registrarLiberacion(sizeof(Mensaje));
-        }
+        for (unsigned int i = 0; i < albumes.getTam(); ++i) delete albumes[i];
+        for (unsigned int i = 0; i < recibidos.getTam(); ++i) delete recibidos[i];
+        Metricas::registrarLiberacion(albumes.getTam() * sizeof(Album) + recibidos.getTam() * sizeof(Mensaje));
         Metricas::contar(albumes.getTam() + recibidos.getTam());
-        while (albumes.getTam() > 0) albumes.eliminar(albumes.getTam() - 1);
-        while (recibidos.getTam() > 0) recibidos.eliminar(recibidos.getTam() - 1);
-        while (enviados.getTam() > 0) enviados.eliminar(enviados.getTam() - 1);
+        recibidos = Lista<Mensaje *>();
+        enviados = Lista<Mensaje *>();
 
         nombre = otro.nombre;
         clave = otro.clave;
@@ -57,9 +46,10 @@ const Usuario &Usuario::operator=(const Usuario &otro) {
         primerNoLeido = 0;
         nacimiento = otro.nacimiento;
         inscripcion = otro.inscripcion;
-        for (unsigned int i = 0; i < otro.albumes.getTam(); ++i)
-            agregarAlbum(new Album(*otro.albumes[i]));
-        Metricas::contar(otro.albumes.getTam());
+        albumes = otro.albumes;
+        for (unsigned int i = 0; i < albumes.getTam(); ++i) albumes[i] = new Album(*albumes[i]);
+        Metricas::registrarReserva(albumes.getTam() * sizeof(Album));
+        Metricas::contar(albumes.getTam());
     }
     return *this;
 }
@@ -87,12 +77,11 @@ void Usuario::setNacimiento(const Fecha &valor) { nacimiento = valor; }
 void Usuario::setInscripcion(const Fecha &valor) { inscripcion = valor; }
 
 bool Usuario::verificarClave(const Lista<char> &intento) const {
-    unsigned int menor = clave.getTam() < intento.getTam() ? clave.getTam() : intento.getTam();
-    bool iguales = true;
-    for (unsigned int i = 0; i < menor; ++i)
-        if (clave[i] != intento[i]) iguales = false;
-    Metricas::contar(menor);
-    return iguales && clave.getTam() == intento.getTam();
+    if (clave.getTam() != intento.getTam()) return false;
+    unsigned int i = 0;
+    while (i < clave.getTam() && clave[i] == intento[i]) ++i;
+    Metricas::contar(i);
+    return i == clave.getTam();
 }
 
 void Usuario::agregarAlbum(Album *album) {
@@ -109,9 +98,8 @@ void Usuario::agregarRecibido(Mensaje *mensaje) {
 }
 
 void Usuario::marcarLeidos() {
-    for (unsigned int i = 0; i < recibidos.getTam(); ++i)
-        if (!recibidos[i]->getLeido()) recibidos[i]->setLeido(true);
-    Metricas::contar(recibidos.getTam());
+    for (unsigned int i = primerNoLeido; i < recibidos.getTam(); ++i) recibidos[i]->setLeido(true);
+    Metricas::contar(recibidos.getTam() - primerNoLeido);
     primerNoLeido = recibidos.getTam();
 }
 
