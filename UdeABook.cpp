@@ -9,8 +9,8 @@ const char *const UdeABook::DIRECTORIO = "C:/Users/Jose Gabriel Giraldo/OneDrive
 
 UdeABook::UdeABook()
     : usuarios(), mensajes(), red(),
-      generador(std::chrono::system_clock::now().time_since_epoch().count()),
-      sesion(nullptr), cambios(0) {
+    generador(std::chrono::system_clock::now().time_since_epoch().count()),
+    sesion(nullptr), cambios(0) {
     Metricas::registrarExterno();
 }
 
@@ -407,10 +407,11 @@ void UdeABook::ejecutar() {
             } else if (opcion == 1) {
                 menuAmistades();
             } else if (opcion == 2) {
-                cout << "Nombre del amigo: ";
-                leer(cin, nombre);
                 Metricas::reiniciar();
                 cout << "\n=== IV. Perfil de amigo ===\n";
+                mostrarAmigos();
+                cout << "Nombre del amigo: ";
+                leer(cin, nombre);
                 visitarPerfil(nombre);
                 Metricas::sumarLocal(sizeof(nombre) + sizeof(opcion));
                 Metricas::reportar();
@@ -614,24 +615,43 @@ void UdeABook::aceptarSolicitud(unsigned int posicion) {
 
 // ------------------------------------------------------------------ IV. Perfil de un amigo
 
+void UdeABook::mostrarAmigos() const {
+    Lista<unsigned int> amigos;
+    red.amigosDe(sesion->getId(), amigos);
+    if (amigos.getTam() == 0) {
+        cout << "Aun no tienes amigos\n";
+        return;
+    }
+    cout << "Tus amigos (";
+    escribir(cout, amigos.getTam());
+    cout << "):\n";
+    for (unsigned int i = 0; i < amigos.getTam(); ++i) {
+        cout << "  ";
+        escribir(cout, usuarios[amigos[i]]->getNombre());
+        cout << '\n';
+    }
+    Metricas::contar(amigos.getTam());
+    Metricas::sumarLocal(sizeof(amigos) + amigos.getCapacidad() * sizeof(unsigned int));
+}
+
 void UdeABook::visitarPerfil(const Lista<char> &nombre) {
-    Usuario *amigo = buscarUsuario(nombre);
-    if (amigo == nullptr || !red.sonAmigos(sesion->getId(), amigo->getId())) {
+    Usuario *buscado = buscarUsuario(nombre);
+    if (buscado == nullptr || !red.sonAmigos(sesion->getId(), buscado->getId())) {
         cout << "Solo puedes visitar el perfil de tus amigos\n";
         return;
     }
-
+    Usuario &amigo = *buscado;
     Lista<unsigned int> visibles, pendientes;
-    const Lista<Album *> &albumes = amigo->getAlbumes();
+    const Lista<Album *> &albumes = amigo.getAlbumes();
     for (unsigned int i = 0; i < albumes.getTam(); ++i)
         if (albumes[i]->getPrivacidad() != Album::PRIVADO) visibles.agregar(i);
     Metricas::contar(albumes.getTam());
 
     while (true) {
         cout << "\nPerfil de ";
-        escribir(cout, amigo->getNombre());
+        escribir(cout, amigo.getNombre());
         cout << " - ";
-        imprimirRuta(*amigo);
+        imprimirRuta(amigo);
         cout << '\n';
         if (visibles.getTam() == 0) {
             cout << "No tiene albumes visibles para ti\n";
@@ -654,10 +674,10 @@ void UdeABook::visitarPerfil(const Lista<char> &nombre) {
             cout << "Opcion no valida\n";
             continue;
         }
-        carrusel(*amigo, *albumes[visibles[opcion - 1]], pendientes);
+        carrusel(amigo, *albumes[visibles[opcion - 1]], pendientes);
     }
     anotarPendientes(pendientes);
-    Metricas::sumarLocal(sizeof(amigo) + 2 * sizeof(visibles) +
+    Metricas::sumarLocal(sizeof(Usuario *) + 2 * sizeof(visibles) +
                          (visibles.getCapacidad() + pendientes.getCapacidad()) * sizeof(unsigned int));
 }
 
@@ -763,11 +783,12 @@ void UdeABook::menuMensajes() {
         if (opcion == 0) break;
 
         if (opcion == 1) {
+            Metricas::reiniciar();
+            mostrarAmigos();
             cout << "Destinatario: ";
             leer(cin, nombre);
             cout << "Mensaje (maximo 512 caracteres): ";
             leer(cin, texto);
-            Metricas::reiniciar();
             enviarMensaje(nombre, texto);
         } else if (opcion == 2) {
             Metricas::reiniciar();
@@ -790,23 +811,24 @@ void UdeABook::menuMensajes() {
 }
 
 void UdeABook::enviarMensaje(const Lista<char> &nombre, const Lista<char> &texto) {
-    Usuario *destino = buscarUsuario(nombre);
-    if (destino == nullptr || !red.sonAmigos(sesion->getId(), destino->getId())) {
+    Usuario *buscado = buscarUsuario(nombre);
+    if (buscado == nullptr || !red.sonAmigos(sesion->getId(), buscado->getId())) {
         cout << "Solo puedes escribirle a tus amigos\n";
         return;
     }
+    Usuario &destino = *buscado;
     if (!Mensaje::textoValido(texto)) {
         cout << "El mensaje debe tener entre 1 y 512 caracteres\n";
         return;
     }
-    Mensaje *m = new Mensaje(sesion->getId(), destino->getId(), Fecha::ahora(), texto);
+    Mensaje *m = new Mensaje(sesion->getId(), destino.getId(), Fecha::ahora(), texto);
     sesion->agregarEnviado(m);
-    destino->agregarRecibido(m);
+    destino.agregarRecibido(m);
     mensajes.agregar(m);
     cambios |= MENSAJES;
     anotarMensaje(*m);
     cout << "Mensaje enviado\n";
-    Metricas::sumarLocal(sizeof(destino) + sizeof(m));
+    Metricas::sumarLocal(sizeof(Usuario *) + sizeof(m));
 }
 
 void UdeABook::leerMensajes() {

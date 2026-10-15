@@ -54,6 +54,7 @@ private:
     void cerrarSesion();
     void mostrarFotosAmigos();
     void menuAmistades();
+    void mostrarAmigos() const;
     void visitarPerfil(const Lista<char> &);
     void verSugerencias(unsigned int);
     void menuMensajes();
