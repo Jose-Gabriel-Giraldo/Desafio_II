@@ -60,6 +60,7 @@ public:
     void marcarLeidos();
     void agregarSolicitud(unsigned int);
     void eliminarSolicitud(unsigned int);
+    void reservar(unsigned int, unsigned int, unsigned int, unsigned int);
 };
 
 #endif

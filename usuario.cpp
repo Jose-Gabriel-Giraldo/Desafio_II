@@ -2,19 +2,19 @@
 
 Usuario::Usuario()
     : nombre(), clave(), correo(), ciudad(), pais(), albumes(), enviados(), recibidos(),
-    solicitudes(), id(0), primerNoLeido(0), nacimiento(), inscripcion() {}
+      solicitudes(), id(0), primerNoLeido(0), nacimiento(), inscripcion() {}
 
 Usuario::Usuario(unsigned int id, const Lista<char> &nombre, const Lista<char> &clave,
                  const Lista<char> &correo, const Lista<char> &ciudad, const Lista<char> &pais,
                  const Fecha &nacimiento, const Fecha &inscripcion)
     : nombre(nombre), clave(clave), correo(correo), ciudad(ciudad), pais(pais), albumes(),
-    enviados(), recibidos(), solicitudes(), id(id), primerNoLeido(0),
-    nacimiento(nacimiento), inscripcion(inscripcion) {}
+      enviados(), recibidos(), solicitudes(), id(id), primerNoLeido(0),
+      nacimiento(nacimiento), inscripcion(inscripcion) {}
 
 Usuario::Usuario(const Usuario &otro)
     : nombre(otro.nombre), clave(otro.clave), correo(otro.correo), ciudad(otro.ciudad),
-    pais(otro.pais), albumes(otro.albumes), enviados(), recibidos(), solicitudes(otro.solicitudes),
-    id(otro.id), primerNoLeido(0), nacimiento(otro.nacimiento), inscripcion(otro.inscripcion) {
+      pais(otro.pais), albumes(otro.albumes), enviados(), recibidos(), solicitudes(otro.solicitudes),
+      id(otro.id), primerNoLeido(0), nacimiento(otro.nacimiento), inscripcion(otro.inscripcion) {
     for (unsigned int i = 0; i < albumes.getTam(); ++i) albumes[i] = new Album(*albumes[i]);
     Metricas::registrarReserva(albumes.getTam() * sizeof(Album));
     Metricas::contar(albumes.getTam());
@@ -106,3 +106,11 @@ void Usuario::marcarLeidos() {
 void Usuario::agregarSolicitud(unsigned int idOrigen) { solicitudes.agregar(idOrigen); }
 
 void Usuario::eliminarSolicitud(unsigned int posicion) { solicitudes.eliminar(posicion); }
+
+void Usuario::reservar(unsigned int nAlbumes, unsigned int nEnviados, unsigned int nRecibidos,
+                       unsigned int nSolicitudes) {
+    albumes.reservar(nAlbumes);
+    enviados.reservar(nEnviados);
+    recibidos.reservar(nRecibidos);
+    solicitudes.reservar(nSolicitudes);
+}
