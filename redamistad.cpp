@@ -1,40 +1,43 @@
 #include "RedAmistad.h"
 
-RedAmistad::RedAmistad() : bits(nullptr), n(0), palabrasFila(0) {}
+RedAmistad::RedAmistad() : bits(nullptr), n(0), palabrasFila(0), amistades(0) {}
 
-RedAmistad::RedAmistad(unsigned int usuarios) : bits(nullptr), n(0), palabrasFila(0) {
+RedAmistad::RedAmistad(unsigned int usuarios) : bits(nullptr), n(0), palabrasFila(0), amistades(0) {
     inicializar(usuarios);
 }
 
-RedAmistad::RedAmistad(const RedAmistad &otra) : bits(nullptr), n(0), palabrasFila(0) {
+RedAmistad::RedAmistad(const RedAmistad &otra) : bits(nullptr), n(0), palabrasFila(0), amistades(0) {
     *this = otra;
 }
 
 RedAmistad::~RedAmistad() {
     delete[] bits;
-    Metricas::registrarLiberacion((unsigned long)n * palabrasFila * sizeof(unsigned long long));
+    Metricas::registrarLiberacion(n * palabrasFila * sizeof(unsigned long long));
 }
 
 const RedAmistad &RedAmistad::operator=(const RedAmistad &otra) {
     if (this != &otra) {
         inicializar(otra.n);
-        unsigned long total = (unsigned long)n * palabrasFila;
+        unsigned long total = n * palabrasFila;
         for (unsigned long i = 0; i < total; ++i) bits[i] = otra.bits[i];
         Metricas::contar(total);
+        amistades = otra.amistades;
     }
     return *this;
 }
 
 unsigned int RedAmistad::getN() const { return n; }
 unsigned int RedAmistad::getPalabrasFila() const { return palabrasFila; }
+unsigned int RedAmistad::getAmistades() const { return amistades; }
 
 void RedAmistad::inicializar(unsigned int usuarios) {
     delete[] bits;
-    Metricas::registrarLiberacion((unsigned long)n * palabrasFila * sizeof(unsigned long long));
+    Metricas::registrarLiberacion(n * palabrasFila * sizeof(unsigned long long));
 
     n = usuarios;
     palabrasFila = (n + 63) / 64;
-    unsigned long total = (unsigned long)n * palabrasFila;
+    amistades = 0;
+    unsigned long total = n * palabrasFila;
     bits = total > 0 ? new unsigned long long[total] : nullptr;
     for (unsigned long i = 0; i < total; ++i) bits[i] = 0;
     Metricas::registrarReserva(total * sizeof(unsigned long long));
@@ -43,18 +46,19 @@ void RedAmistad::inicializar(unsigned int usuarios) {
 
 bool RedAmistad::sonAmigos(unsigned int a, unsigned int b) const {
     if (a >= n || b >= n) return false;
-    return (bits[(unsigned long)a * palabrasFila + b / 64] >> (b % 64)) & 1ULL;
+    return (bits[a * palabrasFila + b / 64] >> (b % 64)) & 1ULL;
 }
 
 void RedAmistad::agregarAmistad(unsigned int a, unsigned int b) {
-    if (a >= n || b >= n || a == b) return;
-    bits[(unsigned long)a * palabrasFila + b / 64] |= 1ULL << (b % 64);
-    bits[(unsigned long)b * palabrasFila + a / 64] |= 1ULL << (a % 64);
+    if (a >= n || b >= n || a == b || sonAmigos(a, b)) return;
+    ++amistades;
+    bits[a * palabrasFila + b / 64] |= 1ULL << (b % 64);
+    bits[b * palabrasFila + a / 64] |= 1ULL << (a % 64);
 }
 
 unsigned int RedAmistad::numAmigos(unsigned int a) const {
     if (a >= n) return 0;
-    const unsigned long long *fila = bits + (unsigned long)a * palabrasFila;
+    const unsigned long long *fila = bits + a * palabrasFila;
     unsigned int total = 0;
     for (unsigned int w = 0; w < palabrasFila; ++w) total += contarBits(fila[w]);
     Metricas::contar(palabrasFila);
@@ -63,8 +67,8 @@ unsigned int RedAmistad::numAmigos(unsigned int a) const {
 
 unsigned int RedAmistad::amigosEnComun(unsigned int a, unsigned int b) const {
     if (a >= n || b >= n) return 0;
-    const unsigned long long *filaA = bits + (unsigned long)a * palabrasFila;
-    const unsigned long long *filaB = bits + (unsigned long)b * palabrasFila;
+    const unsigned long long *filaA = bits + a * palabrasFila;
+    const unsigned long long *filaB = bits + b * palabrasFila;
     unsigned int total = 0;
     for (unsigned int w = 0; w < palabrasFila; ++w) total += contarBits(filaA[w] & filaB[w]);
     Metricas::contar(palabrasFila);
@@ -74,7 +78,7 @@ unsigned int RedAmistad::amigosEnComun(unsigned int a, unsigned int b) const {
 void RedAmistad::amigosDe(unsigned int a, Lista<unsigned int> &salida) const {
     salida = Lista<unsigned int>();
     if (a >= n) return;
-    const unsigned long long *fila = bits + (unsigned long)a * palabrasFila;
+    const unsigned long long *fila = bits + a * palabrasFila;
     unsigned long iteraciones = palabrasFila;
     for (unsigned int w = 0; w < palabrasFila; ++w) {
         unsigned long long palabra = fila[w];
@@ -93,7 +97,7 @@ void RedAmistad::sugerencias(unsigned int a, unsigned int k, Lista<unsigned int>
     comunes = Lista<unsigned int>();
     if (a >= n || k == 0) return;
 
-    const unsigned long long *filaA = bits + (unsigned long)a * palabrasFila;
+    const unsigned long long *filaA = bits + a * palabrasFila;
     unsigned long long *candidatos = new unsigned long long[palabrasFila];
     for (unsigned int w = 0; w < palabrasFila; ++w) candidatos[w] = 0;
     unsigned long iteraciones = palabrasFila;
@@ -102,7 +106,7 @@ void RedAmistad::sugerencias(unsigned int a, unsigned int k, Lista<unsigned int>
         unsigned long long palabra = filaA[w];
         while (palabra != 0) {
             unsigned int amigo = w * 64 + bitMenor(palabra);
-            const unsigned long long *filaAmigo = bits + (unsigned long)amigo * palabrasFila;
+            const unsigned long long *filaAmigo = bits + amigo * palabrasFila;
             for (unsigned int x = 0; x < palabrasFila; ++x) candidatos[x] |= filaAmigo[x];
             iteraciones += palabrasFila;
             palabra &= palabra - 1;

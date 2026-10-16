@@ -8,6 +8,7 @@ private:
     unsigned long long *bits;
     unsigned int n;
     unsigned int palabrasFila;
+    unsigned int amistades;
 
     static unsigned int contarBits(unsigned long long);
     static unsigned int bitMenor(unsigned long long);
@@ -22,6 +23,7 @@ public:
 
     unsigned int getN() const;
     unsigned int getPalabrasFila() const;
+    unsigned int getAmistades() const;
 
     void inicializar(unsigned int);
     bool sonAmigos(unsigned int, unsigned int) const;

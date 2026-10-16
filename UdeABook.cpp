@@ -70,109 +70,113 @@ const char *UdeABook::getDirectorio() { return DIRECTORIO; }
 
 bool UdeABook::cargarDatos() {
     Lista<char> nombreArchivo = ruta("usuarios.txt");
-    ifstream archivo(&nombreArchivo[0]);
-    if (!archivo) return false;
-    liberar();
-
-    unsigned long n = 0, a = 0, b = 0, c = 0, d = 0;
-    leer(archivo, n);
-    usuarios.reservar(n);
+    unsigned long n = 0, a = 0, b = 0, c = 0, d = 0, iteraciones = 0;
     Lista<char> nombre, clave, correo, ciudad, pais;
-    Fecha nacimiento, inscripcion;
-    for (unsigned long i = 0; i < n; ++i) {
-        leer(archivo, nombre, '|');
-        leer(archivo, clave, '|');
-        leer(archivo, correo, '|');
-        leer(archivo, ciudad, '|');
-        leer(archivo, pais, '|');
-        leer(archivo, nacimiento);
-        leer(archivo, inscripcion);
-        leer(archivo, a);
-        leer(archivo, b);
-        leer(archivo, c);
-        leer(archivo, d);
-        Usuario *u = new Usuario(i, nombre, clave, correo, ciudad, pais, nacimiento, inscripcion);
-        u->reservar(a, b, c, d);
-        usuarios.agregar(u);
+    Fecha nacimiento, inscripcion, fecha;
+    {
+        ifstream archivo(&nombreArchivo[0]);
+        if (!archivo) return false;
+        liberar();
+        leer(archivo, n);
+        usuarios.reservar(n);
+        for (unsigned long i = 0; i < n; ++i) {
+            leer(archivo, nombre, '|');
+            leer(archivo, clave, '|');
+            leer(archivo, correo, '|');
+            leer(archivo, ciudad, '|');
+            leer(archivo, pais, '|');
+            leer(archivo, nacimiento);
+            leer(archivo, inscripcion);
+            leer(archivo, a);
+            leer(archivo, b);
+            leer(archivo, c);
+            leer(archivo, d);
+            Usuario *u = new Usuario(i, nombre, clave, correo, ciudad, pais, nacimiento, inscripcion);
+            u->reservar(a, b, c, d);
+            usuarios.agregar(u);
+        }
+        Metricas::registrarReserva(n * sizeof(Usuario));
+        Metricas::contar(n);
     }
-    Metricas::registrarReserva(n * sizeof(Usuario));
-    Metricas::contar(n);
-    archivo.close();
     red.inicializar(n);
 
     nombreArchivo = ruta("amistades.txt");
-    archivo.open(&nombreArchivo[0]);
-    leer(archivo, c);
-    for (unsigned long i = 0; i < c; ++i) {
-        leer(archivo, a);
-        leer(archivo, b);
-        red.agregarAmistad(a, b);
+    {
+        ifstream archivo(&nombreArchivo[0]);
+        c = 0;
+        leer(archivo, c);
+        for (unsigned long i = 0; i < c; ++i) {
+            leer(archivo, a);
+            leer(archivo, b);
+            red.agregarAmistad(a, b);
+        }
+        Metricas::contar(c);
     }
-    Metricas::contar(c);
-    archivo.close();
 
     nombreArchivo = ruta("solicitudes.txt");
-    archivo.open(&nombreArchivo[0]);
-    c = 0;
-    leer(archivo, c);
-    for (unsigned long i = 0; i < c; ++i) {
-        leer(archivo, a);
-        leer(archivo, b);
-        if (a < n && b < n) usuarios[b]->agregarSolicitud(a);
+    {
+        ifstream archivo(&nombreArchivo[0]);
+        c = 0;
+        leer(archivo, c);
+        for (unsigned long i = 0; i < c; ++i) {
+            leer(archivo, a);
+            leer(archivo, b);
+            if (a < n && b < n) usuarios[b]->agregarSolicitud(a);
+        }
+        Metricas::contar(c);
     }
-    Metricas::contar(c);
-    archivo.close();
 
     nombreArchivo = ruta("mensajes.txt");
-    archivo.open(&nombreArchivo[0]);
-    c = 0;
-    leer(archivo, c);
-    mensajes.reservar(c + c / 8);
-    Fecha fecha;
-    for (unsigned long i = 0; i < c; ++i) {
-        leer(archivo, a);
-        leer(archivo, b);
-        leer(archivo, fecha);
-        leer(archivo, d);
-        leer(archivo, nombre);
-        if (a >= n || b >= n) continue;
-        Mensaje *m = new Mensaje(a, b, fecha, nombre, d == 1);
-        usuarios[a]->agregarEnviado(m);
-        usuarios[b]->agregarRecibido(m);
-        mensajes.agregar(m);
+    {
+        ifstream archivo(&nombreArchivo[0]);
+        c = 0;
+        leer(archivo, c);
+        mensajes.reservar(c + c / 8);
+        for (unsigned long i = 0; i < c; ++i) {
+            leer(archivo, a);
+            leer(archivo, b);
+            leer(archivo, fecha);
+            leer(archivo, d);
+            leer(archivo, nombre);
+            if (a >= n || b >= n) continue;
+            Mensaje *m = new Mensaje(a, b, fecha, nombre, d == 1);
+            usuarios[a]->agregarEnviado(m);
+            usuarios[b]->agregarRecibido(m);
+            mensajes.agregar(m);
+        }
+        Metricas::contar(c);
     }
-    Metricas::contar(c);
-    archivo.close();
 
     nombreArchivo = ruta("albumes.txt");
-    archivo.open(&nombreArchivo[0]);
-    c = 0;
-    leer(archivo, c);
-    unsigned long iteraciones = c;
-    for (unsigned long i = 0; i < c; ++i) {
-        unsigned long fotos = 0, tamano = 0, likes = 0;
-        leer(archivo, a);
-        leer(archivo, nombre, '|');
-        leer(archivo, b);
-        leer(archivo, fotos);
-        Album *album = new Album(nombre, b);
-        for (unsigned long j = 0; j < fotos; ++j) {
+    {
+        ifstream archivo(&nombreArchivo[0]);
+        c = 0;
+        leer(archivo, c);
+        iteraciones = c;
+        for (unsigned long i = 0; i < c; ++i) {
+            unsigned long fotos = 0, tamano = 0, likes = 0;
+            leer(archivo, a);
             leer(archivo, nombre, '|');
-            leer(archivo, fecha);
-            leer(archivo, tamano);
-            leer(archivo, likes);
-            album->agregarFoto(new Foto(nombre, fecha, tamano, likes));
+            leer(archivo, b);
+            leer(archivo, fotos);
+            Album *album = new Album(nombre, b);
+            for (unsigned long j = 0; j < fotos; ++j) {
+                leer(archivo, nombre, '|');
+                leer(archivo, fecha);
+                leer(archivo, tamano);
+                leer(archivo, likes);
+                album->agregarFoto(new Foto(nombre, fecha, tamano, likes));
+            }
+            iteraciones += fotos;
+            if (a < n) usuarios[a]->agregarAlbum(album);
+            else delete album;
         }
-        iteraciones += fotos;
-        if (a < n) usuarios[a]->agregarAlbum(album);
-        else delete album;
+        Metricas::contar(iteraciones);
     }
-    Metricas::contar(iteraciones);
-    archivo.close();
 
     aplicarCambios();
-    Metricas::sumarLocal(sizeof(nombreArchivo) + sizeof(archivo) + 5 * sizeof(n) + 5 * sizeof(nombre) +
-                         3 * sizeof(fecha) + sizeof(iteraciones));
+    Metricas::sumarLocal(sizeof(nombreArchivo) + sizeof(ifstream) + 6 * sizeof(n) + 5 * sizeof(nombre) +
+                         3 * sizeof(fecha));
     return true;
 }
 
@@ -238,121 +242,115 @@ void UdeABook::aplicarCambios() {
 bool UdeABook::guardarDatos() {
     if (cambios == 0) return true;
     Lista<char> nombreArchivo;
-    ofstream archivo;
     unsigned long total = 0, iteraciones = 0;
     unsigned int n = usuarios.getTam();
 
     if (cambios & AMISTADES) {
         nombreArchivo = ruta("amistades.txt");
-        archivo.open(&nombreArchivo[0]);
+        ofstream archivo(&nombreArchivo[0]);
         if (!archivo) return false;
-        total = 0;
-        for (unsigned int i = 0; i < n; ++i) total += red.numAmigos(i);
-        escribir(archivo, total / 2);
-        archivo.put('\n');
+        escribir(archivo, red.getAmistades());
+        archivo << '\n';
         Lista<unsigned int> amigos;
         for (unsigned int i = 0; i < n; ++i) {
             red.amigosDe(i, amigos);
             for (unsigned int j = 0; j < amigos.getTam(); ++j) {
                 if (amigos[j] < i) continue;
                 escribir(archivo, i);
-                archivo.put('|');
+                archivo << '|';
                 escribir(archivo, amigos[j]);
-                archivo.put('\n');
+                archivo << '\n';
             }
             iteraciones += amigos.getTam();
         }
-        archivo.close();
     }
 
     if (cambios & SOLICITUDES) {
         nombreArchivo = ruta("solicitudes.txt");
-        archivo.open(&nombreArchivo[0]);
+        ofstream archivo(&nombreArchivo[0]);
         if (!archivo) return false;
         total = 0;
         for (unsigned int i = 0; i < n; ++i) total += usuarios[i]->getSolicitudes().getTam();
         escribir(archivo, total);
-        archivo.put('\n');
+        archivo << '\n';
         for (unsigned int i = 0; i < n; ++i) {
             const Lista<unsigned int> &pendientes = usuarios[i]->getSolicitudes();
             for (unsigned int j = 0; j < pendientes.getTam(); ++j) {
                 escribir(archivo, pendientes[j]);
-                archivo.put('|');
+                archivo << '|';
                 escribir(archivo, i);
-                archivo.put('\n');
+                archivo << '\n';
             }
         }
         iteraciones += 2 * n + total;
-        archivo.close();
     }
 
     if (cambios & MENSAJES) {
         nombreArchivo = ruta("mensajes.txt");
-        archivo.open(&nombreArchivo[0]);
+        ofstream archivo(&nombreArchivo[0]);
         if (!archivo) return false;
         escribir(archivo, mensajes.getTam());
-        archivo.put('\n');
+        archivo << '\n';
         for (unsigned int i = 0; i < mensajes.getTam(); ++i) {
             const Mensaje &m = *mensajes[i];
             escribir(archivo, m.getEmisor());
-            archivo.put('|');
+            archivo << '|';
             escribir(archivo, m.getReceptor());
-            archivo.put('|');
+            archivo << '|';
             escribir(archivo, m.getFecha());
-            archivo.put('|');
-            archivo.put(m.getLeido() ? '1' : '0');
-            archivo.put('|');
+            archivo << '|';
+            archivo << (m.getLeido() ? '1' : '0');
+            archivo << '|';
             escribir(archivo, m.getTexto());
-            archivo.put('\n');
+            archivo << '\n';
         }
         iteraciones += mensajes.getTam();
-        archivo.close();
     }
 
     if (cambios & ALBUMES) {
         nombreArchivo = ruta("albumes.txt");
-        archivo.open(&nombreArchivo[0]);
+        ofstream archivo(&nombreArchivo[0]);
         if (!archivo) return false;
         total = 0;
         for (unsigned int i = 0; i < n; ++i) total += usuarios[i]->getAlbumes().getTam();
         escribir(archivo, total);
-        archivo.put('\n');
+        archivo << '\n';
         for (unsigned int i = 0; i < n; ++i) {
             const Lista<Album *> &albumes = usuarios[i]->getAlbumes();
             for (unsigned int j = 0; j < albumes.getTam(); ++j) {
                 const Lista<Foto *> &fotos = albumes[j]->getFotos();
                 escribir(archivo, i);
-                archivo.put('|');
+                archivo << '|';
                 escribir(archivo, albumes[j]->getNombre());
-                archivo.put('|');
+                archivo << '|';
                 escribir(archivo, albumes[j]->getPrivacidad());
-                archivo.put('|');
+                archivo << '|';
                 escribir(archivo, fotos.getTam());
-                archivo.put('\n');
+                archivo << '\n';
                 for (unsigned int k = 0; k < fotos.getTam(); ++k) {
                     escribir(archivo, fotos[k]->getNombre());
-                    archivo.put('|');
+                    archivo << '|';
                     escribir(archivo, fotos[k]->getCaptura());
-                    archivo.put('|');
+                    archivo << '|';
                     escribir(archivo, fotos[k]->getTamano());
-                    archivo.put('|');
+                    archivo << '|';
                     escribir(archivo, fotos[k]->getLikes());
-                    archivo.put('\n');
+                    archivo << '\n';
                 }
                 iteraciones += fotos.getTam();
             }
         }
         iteraciones += 2 * n + total;
-        archivo.close();
     }
 
     nombreArchivo = ruta("cambios.txt");
-    archivo.open(&nombreArchivo[0]);
-    archivo.close();
+    {
+        ofstream vaciar(&nombreArchivo[0]);
+    }
     cambios = 0;
 
     Metricas::contar(iteraciones);
-    Metricas::sumarLocal(sizeof(nombreArchivo) + sizeof(archivo) + 2 * sizeof(total) + sizeof(n));
+    Metricas::sumarLocal(sizeof(nombreArchivo) + sizeof(ofstream) + 2 * sizeof(total) + sizeof(n));
     return true;
 }
 
@@ -902,25 +900,25 @@ void UdeABook::imprimirMensaje(const Mensaje &m) const {
 void UdeABook::anotarMensaje(const Mensaje &m) {
     Lista<char> nombreArchivo = ruta("cambios.txt");
     ofstream archivo(&nombreArchivo[0], ios::app);
-    archivo.put('M');
-    archivo.put('|');
+    archivo << 'M';
+    archivo << '|';
     escribir(archivo, m.getEmisor());
-    archivo.put('|');
+    archivo << '|';
     escribir(archivo, m.getReceptor());
-    archivo.put('|');
+    archivo << '|';
     escribir(archivo, m.getFecha());
-    archivo.put('|');
+    archivo << '|';
     escribir(archivo, m.getTexto());
-    archivo.put('\n');
+    archivo << '\n';
 }
 
 void UdeABook::anotarLectura(unsigned int usuario) {
     Lista<char> nombreArchivo = ruta("cambios.txt");
     ofstream archivo(&nombreArchivo[0], ios::app);
-    archivo.put('L');
-    archivo.put('|');
+    archivo << 'L';
+    archivo << '|';
     escribir(archivo, usuario);
-    archivo.put('\n');
+    archivo << '\n';
 }
 
 void UdeABook::anotarPendientes(const Lista<unsigned int> &pendientes) {
@@ -931,12 +929,12 @@ void UdeABook::anotarPendientes(const Lista<unsigned int> &pendientes) {
     while (i < pendientes.getTam()) {
         char tipo = pendientes[i++];
         unsigned int campos = tipo == 'K' ? 4 : 2;
-        archivo.put(tipo);
+        archivo << tipo;
         for (unsigned int j = 0; j < campos; ++j) {
-            archivo.put('|');
+            archivo << '|';
             escribir(archivo, pendientes[i++]);
         }
-        archivo.put('\n');
+        archivo << '\n';
     }
     Metricas::contar(pendientes.getTam());
 }
@@ -993,7 +991,7 @@ int UdeABook::comparar(const Lista<char> &a, const Lista<char> &b) {
     while (i < a.getTam() && i < b.getTam() && a[i] == b[i]) ++i;
     Metricas::contar(i);
     if (i < a.getTam() && i < b.getTam())
-        return (unsigned char)a[i] < (unsigned char)b[i] ? -1 : 1;
+        return a[i] < b[i] ? -1 : 1;
     if (a.getTam() == b.getTam()) return 0;
     return a.getTam() < b.getTam() ? -1 : 1;
 }
@@ -1003,7 +1001,7 @@ bool UdeABook::leer(istream &entrada, Lista<char> &salida, char separador) {
     char c;
     bool leyo = false;
     unsigned long n = 0;
-    while (entrada.get(c)) {
+    while (entrada >> noskipws >> c) {
         leyo = true;
         if (c == separador || c == '\n') break;
         if (c != '\r') salida.agregar(c);
@@ -1018,7 +1016,7 @@ bool UdeABook::leer(istream &entrada, unsigned long &numero) {
     char c;
     bool valido = true, leyo = false;
     unsigned long digitos = 0;
-    while (entrada.get(c)) {
+    while (entrada >> noskipws >> c) {
         leyo = true;
         if (c == '|' || c == '\n') break;
         if (c == '\r' || (c == ' ' && digitos == 0)) continue;
@@ -1038,7 +1036,7 @@ bool UdeABook::leer(istream &entrada, Fecha &fecha) {
     unsigned int actual = 0, iteraciones = 0;
     bool enNumero = false;
     char c;
-    while (entrada.get(c)) {
+    while (entrada >> noskipws >> c) {
         ++iteraciones;
         if (c == '|' || c == '\n') break;
         if (c >= '0' && c <= '9') {
@@ -1074,22 +1072,22 @@ void UdeABook::escribir(ostream &salida, unsigned long numero, unsigned char anc
     } while (numero > 0);
     while (n < ancho && n < 20) digitos[n++] = '0';
     Metricas::contar(n);
-    while (n > 0) salida.put(digitos[--n]);
+    while (n > 0) salida << digitos[--n];
 }
 
 void UdeABook::escribir(ostream &salida, const Lista<char> &texto) {
-    for (unsigned int i = 0; i < texto.getTam(); ++i) salida.put(texto[i]);
+    for (unsigned int i = 0; i < texto.getTam(); ++i) salida << texto[i];
     Metricas::contar(texto.getTam());
 }
 
 void UdeABook::escribir(ostream &salida, const Fecha &fecha) {
     escribir(salida, fecha.getAnio(), 4);
-    salida.put('-');
+    salida << '-';
     escribir(salida, fecha.getMes(), 2);
-    salida.put('-');
+    salida << '-';
     escribir(salida, fecha.getDia(), 2);
-    salida.put(' ');
+    salida << ' ';
     escribir(salida, fecha.getHora(), 2);
-    salida.put(':');
+    salida << ':';
     escribir(salida, fecha.getMinuto(), 2);
 }
