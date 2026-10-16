@@ -11,6 +11,15 @@ add_executable(Desafio_II main.cpp
     fecha.h fecha.cpp
     foto.h foto.cpp
     mensaje.h mensaje.cpp
+    usuario.h usuario.cpp
+    album.cpp
+    album.h
+    redamistad.h redamistad.cpp
+    UdeABook.cpp UdeABook.h
+    albumes.txt amistades.txt cambios.txt
+    solicitudes.txt
+    usuarios.txt
+    mensajes.txt
 )
 
 include(GNUInstallDirs)

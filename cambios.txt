@@ -1,0 +1,18 @@
+L|0
+A|492|0
+M|0|492|2026-10-14 19:13|Hola, soy jose desde otra cuenta
+A|92|492
+K|28|0|0|11
+K|28|0|0|10
+A|501|0
+S|0|37
+K|28|0|0|11
+K|28|0|0|10
+S|0|935
+M|0|28|2026-10-15 19:04|Hola, esta es una prueba para el desafio 2
+A|613|0
+S|0|24
+K|28|0|0|11
+K|28|0|0|10
+S|0|448
+M|0|28|2026-10-15 19:24|Nueva prueba segunda version para eficiencia
