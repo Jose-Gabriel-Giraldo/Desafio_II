@@ -73,6 +73,36 @@ build CMakeFiles/Desafio_II.dir/foto.cpp.obj: CXX_COMPILER__Desafio_II_unscanned
   OBJECT_DIR = CMakeFiles\Desafio_II.dir
   OBJECT_FILE_DIR = CMakeFiles\Desafio_II.dir
 
+build CMakeFiles/Desafio_II.dir/mensaje.cpp.obj: CXX_COMPILER__Desafio_II_unscanned_Debug C$:/Users/Jose$ Gabriel$ Giraldo/OneDrive/Documentos/Universidad/Sexto$ semestre/Info/Desafio_II/mensaje.cpp || cmake_object_order_depends_target_Desafio_II
+  DEP_FILE = CMakeFiles\Desafio_II.dir\mensaje.cpp.obj.d
+  FLAGS = -DQT_QML_DEBUG -g -std=gnu++17 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\Desafio_II.dir
+  OBJECT_FILE_DIR = CMakeFiles\Desafio_II.dir
+
+build CMakeFiles/Desafio_II.dir/Usuario.cpp.obj: CXX_COMPILER__Desafio_II_unscanned_Debug C$:/Users/Jose$ Gabriel$ Giraldo/OneDrive/Documentos/Universidad/Sexto$ semestre/Info/Desafio_II/Usuario.cpp || cmake_object_order_depends_target_Desafio_II
+  DEP_FILE = CMakeFiles\Desafio_II.dir\Usuario.cpp.obj.d
+  FLAGS = -DQT_QML_DEBUG -g -std=gnu++17 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\Desafio_II.dir
+  OBJECT_FILE_DIR = CMakeFiles\Desafio_II.dir
+
+build CMakeFiles/Desafio_II.dir/album.cpp.obj: CXX_COMPILER__Desafio_II_unscanned_Debug C$:/Users/Jose$ Gabriel$ Giraldo/OneDrive/Documentos/Universidad/Sexto$ semestre/Info/Desafio_II/album.cpp || cmake_object_order_depends_target_Desafio_II
+  DEP_FILE = CMakeFiles\Desafio_II.dir\album.cpp.obj.d
+  FLAGS = -DQT_QML_DEBUG -g -std=gnu++17 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\Desafio_II.dir
+  OBJECT_FILE_DIR = CMakeFiles\Desafio_II.dir
+
+build CMakeFiles/Desafio_II.dir/redamistad.cpp.obj: CXX_COMPILER__Desafio_II_unscanned_Debug C$:/Users/Jose$ Gabriel$ Giraldo/OneDrive/Documentos/Universidad/Sexto$ semestre/Info/Desafio_II/redamistad.cpp || cmake_object_order_depends_target_Desafio_II
+  DEP_FILE = CMakeFiles\Desafio_II.dir\redamistad.cpp.obj.d
+  FLAGS = -DQT_QML_DEBUG -g -std=gnu++17 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\Desafio_II.dir
+  OBJECT_FILE_DIR = CMakeFiles\Desafio_II.dir
+
+build CMakeFiles/Desafio_II.dir/UdeABook.cpp.obj: CXX_COMPILER__Desafio_II_unscanned_Debug C$:/Users/Jose$ Gabriel$ Giraldo/OneDrive/Documentos/Universidad/Sexto$ semestre/Info/Desafio_II/UdeABook.cpp || cmake_object_order_depends_target_Desafio_II
+  DEP_FILE = CMakeFiles\Desafio_II.dir\UdeABook.cpp.obj.d
+  FLAGS = -DQT_QML_DEBUG -g -std=gnu++17 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\Desafio_II.dir
+  OBJECT_FILE_DIR = CMakeFiles\Desafio_II.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target Desafio_II
@@ -81,7 +111,7 @@ build CMakeFiles/Desafio_II.dir/foto.cpp.obj: CXX_COMPILER__Desafio_II_unscanned
 #############################################
 # Link the executable Desafio_II.exe
 
-build Desafio_II.exe: CXX_EXECUTABLE_LINKER__Desafio_II_Debug CMakeFiles/Desafio_II.dir/main.cpp.obj CMakeFiles/Desafio_II.dir/metricas.cpp.obj CMakeFiles/Desafio_II.dir/fecha.cpp.obj CMakeFiles/Desafio_II.dir/foto.cpp.obj
+build Desafio_II.exe: CXX_EXECUTABLE_LINKER__Desafio_II_Debug CMakeFiles/Desafio_II.dir/main.cpp.obj CMakeFiles/Desafio_II.dir/metricas.cpp.obj CMakeFiles/Desafio_II.dir/fecha.cpp.obj CMakeFiles/Desafio_II.dir/foto.cpp.obj CMakeFiles/Desafio_II.dir/mensaje.cpp.obj CMakeFiles/Desafio_II.dir/Usuario.cpp.obj CMakeFiles/Desafio_II.dir/album.cpp.obj CMakeFiles/Desafio_II.dir/redamistad.cpp.obj CMakeFiles/Desafio_II.dir/UdeABook.cpp.obj
   FLAGS = -DQT_QML_DEBUG -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\Desafio_II.dir
