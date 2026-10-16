@@ -7,6 +7,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(Desafio_II main.cpp
     metricas.h metricas.cpp
+    lista.h
+    fecha.h fecha.cpp
+    foto.h foto.cpp
+    mensaje.h mensaje.cpp
 )
 
 include(GNUInstallDirs)

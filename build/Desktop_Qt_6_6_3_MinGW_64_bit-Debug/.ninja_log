@@ -1,4 +1,10 @@
 # ninja log v6
-4	1846	8131256188478028	CMakeFiles/Desafio_II.dir/main.cpp.obj	82c1641e9e2d1cda
-161	1856	8131256190035840	CMakeFiles/Desafio_II.dir/metricas.cpp.obj	853a117e9502e359
-1856	4038	8131256207018202	Desafio_II.exe	37379557a4330448
+10	1359	8132881787201407	CMakeFiles/Desafio_II.dir/main.cpp.obj	82c1641e9e2d1cda
+209	1292	8131902426728960	CMakeFiles/Desafio_II.dir/metricas.cpp.obj	853a117e9502e359
+10	1015	8132885052534234	CMakeFiles/Desafio_II.dir/fecha.cpp.obj	4ccd50f63074b884
+1018	2708	8132885062613661	Desafio_II.exe	7d631ed95d019ee1
+407	1289	8132889236645495	CMakeFiles/Desafio_II.dir/fecha.cpp.obj	4ccd50f63074b884
+9	1363	8132889232578110	CMakeFiles/Desafio_II.dir/main.cpp.obj	82c1641e9e2d1cda
+127	1369	8132889233836989	CMakeFiles/Desafio_II.dir/metricas.cpp.obj	853a117e9502e359
+568	1413	8132889238262759	CMakeFiles/Desafio_II.dir/foto.cpp.obj	c2f45b84a86abcf0
+1414	3320	8132889246712110	Desafio_II.exe	4bd7ea4e326ec4bb

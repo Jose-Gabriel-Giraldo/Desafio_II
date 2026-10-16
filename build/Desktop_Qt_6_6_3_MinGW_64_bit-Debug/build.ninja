@@ -61,6 +61,18 @@ build CMakeFiles/Desafio_II.dir/metricas.cpp.obj: CXX_COMPILER__Desafio_II_unsca
   OBJECT_DIR = CMakeFiles\Desafio_II.dir
   OBJECT_FILE_DIR = CMakeFiles\Desafio_II.dir
 
+build CMakeFiles/Desafio_II.dir/fecha.cpp.obj: CXX_COMPILER__Desafio_II_unscanned_Debug C$:/Users/Jose$ Gabriel$ Giraldo/OneDrive/Documentos/Universidad/Sexto$ semestre/Info/Desafio_II/fecha.cpp || cmake_object_order_depends_target_Desafio_II
+  DEP_FILE = CMakeFiles\Desafio_II.dir\fecha.cpp.obj.d
+  FLAGS = -DQT_QML_DEBUG -g -std=gnu++17 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\Desafio_II.dir
+  OBJECT_FILE_DIR = CMakeFiles\Desafio_II.dir
+
+build CMakeFiles/Desafio_II.dir/foto.cpp.obj: CXX_COMPILER__Desafio_II_unscanned_Debug C$:/Users/Jose$ Gabriel$ Giraldo/OneDrive/Documentos/Universidad/Sexto$ semestre/Info/Desafio_II/foto.cpp || cmake_object_order_depends_target_Desafio_II
+  DEP_FILE = CMakeFiles\Desafio_II.dir\foto.cpp.obj.d
+  FLAGS = -DQT_QML_DEBUG -g -std=gnu++17 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\Desafio_II.dir
+  OBJECT_FILE_DIR = CMakeFiles\Desafio_II.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target Desafio_II
@@ -69,7 +81,7 @@ build CMakeFiles/Desafio_II.dir/metricas.cpp.obj: CXX_COMPILER__Desafio_II_unsca
 #############################################
 # Link the executable Desafio_II.exe
 
-build Desafio_II.exe: CXX_EXECUTABLE_LINKER__Desafio_II_Debug CMakeFiles/Desafio_II.dir/main.cpp.obj CMakeFiles/Desafio_II.dir/metricas.cpp.obj
+build Desafio_II.exe: CXX_EXECUTABLE_LINKER__Desafio_II_Debug CMakeFiles/Desafio_II.dir/main.cpp.obj CMakeFiles/Desafio_II.dir/metricas.cpp.obj CMakeFiles/Desafio_II.dir/fecha.cpp.obj CMakeFiles/Desafio_II.dir/foto.cpp.obj
   FLAGS = -DQT_QML_DEBUG -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\Desafio_II.dir
